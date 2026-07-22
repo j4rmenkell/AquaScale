@@ -55,3 +55,15 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Frontend
+AquaScale.Client/node_modules/
+AquaScale.Client/dist/
+
+# Secrets — never commit real config
+appsettings.Development.json
+**/appsettings.Development.json
+
+# Docker build context safety
+**/bin/
+**/obj/

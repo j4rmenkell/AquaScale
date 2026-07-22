@@ -1,0 +1,14 @@
+services:
+  api:
+    build:
+      context: ./AquaScale.Api
+      dockerfile: Dockerfile
+    env_file:
+      - ./AquaScale.Api/.env
+    # ports, depends_on, etc. added once the API has something to serve
+
+  client:
+    build:
+      context: ./AquaScale.Client
+      dockerfile: Dockerfile
+    # added once the frontend has something to build
