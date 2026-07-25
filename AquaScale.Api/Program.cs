@@ -1,4 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using AquaScale.Api.Data; // Update this if your context is in a different namespace
+using AquaScale.Api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<AquaScaleDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("SupabaseDb"))
+           .UseSnakeCaseNamingConvention());
+
+builder.Services.AddScoped<PropertyOwnershipService>();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
