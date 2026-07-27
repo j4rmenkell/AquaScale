@@ -19,4 +19,7 @@ public class Profile
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? DateDeactivated { get; set; }
+    // TODO: BuyerRef must be populated when a Customer/Buyer profile is created —
+    // no onboarding flow sets this yet. GetCurrentHomeownerAsync will always
+    // return null until this is wired up.
 }
