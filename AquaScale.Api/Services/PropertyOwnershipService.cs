@@ -24,6 +24,10 @@ public class PropertyOwnershipService
     /// real WEBS data + M_GenCodes Group 23, which decodes backout_type
     /// as a reason code, only ever populated on superseded reservations).
     /// </summary>
+    /// 
+    /// // TODO: BuyerRef must be populated when a Customer/Buyer profile is created —
+    // no onboarding flow sets this yet. GetCurrentHomeownerAsync will always
+    // return null until this is wired up.
     public async Task<Profile?> GetCurrentHomeownerAsync(Guid propertyId, CancellationToken ct = default)
     {
         var property = await _context.Properties
