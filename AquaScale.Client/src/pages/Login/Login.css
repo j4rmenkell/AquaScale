@@ -1,0 +1,320 @@
+/* ---- Palette (from the figma) ----
+   --color-primary     deep green: logo badge, submit button
+   --color-secondary   brighter green: links, hover/focus states
+   --color-text        the page's one text color: headings, labels, body copy
+   --color-background  light gray: right panel background
+   --color-border      input borders
+*/
+
+.login-page {
+    --color-primary: #17311A;
+    --color-secondary: #316837;
+    --color-text: #45464D;
+    --color-background: #F2F4F6;
+    --color-border: #E6E6E6;
+
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ---------- Left: brand panel ---------- */
+
+.brand-panel {
+    position: relative;
+    flex: 1.2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.brand-panel__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px);
+    /* scale up so the blurred edges don't show a sharp/transparent border */
+    transform: scale(1.08);
+}
+
+.brand-panel__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+            rgba(10, 20, 15, 0.55) 0%,
+            rgba(10, 20, 15, 0.35) 40%,
+            rgba(10, 20, 15, 0.75) 100%);
+}
+
+.brand-panel__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 2.5rem;
+}
+
+.brand-panel__badge {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    align-self: flex-start;
+    padding: 0.9rem 1.4rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+}
+
+.brand-panel__logo-mark {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-panel__logo-mark img {
+    width: 26px;
+    height: 26px;
+}
+
+.brand-panel__name {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+}
+
+.brand-panel__tagline {
+    margin: 0.15rem 0 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.brand-panel__copy {
+    max-width: 34rem;
+    margin-bottom: 12rem;
+    /* increase to push the text higher, decrease to lower it */
+}
+
+.brand-panel__headline {
+    margin: 0 0 1rem;
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: #fff;
+}
+
+.brand-panel__description {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ---------- Right: form panel ---------- */
+
+.login-page__panel {
+    flex: 1;
+    min-width: 22rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-background);
+    padding: 2rem;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 24rem;
+}
+
+.login-form__title {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--color-text);
+}
+
+.login-form__subtitle {
+    margin: 0.25rem 0 1.75rem;
+    font-size: 0.95rem;
+    color: var(--color-text);
+}
+
+/* ---------- Shared form field ---------- */
+
+.form-field {
+    margin-bottom: 1.25rem;
+}
+
+.form-field__label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.form-field__control {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: #fff;
+    transition: border-color 0.15s ease;
+}
+
+.form-field__control:focus-within {
+    border-color: var(--color-secondary);
+}
+
+.form-field__icon {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.form-field__input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0.75rem 0;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    font-family: inherit;
+}
+
+/* Chrome ignores background-color on autofilled inputs — this inset
+   box-shadow trick is the standard workaround. The long transition delay
+   stops the yellow/blue flash from showing before it kicks in. */
+.form-field__input:-webkit-autofill,
+.form-field__input:-webkit-autofill:hover,
+.form-field__input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-text);
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+.form-field__input::placeholder {
+    color: #9ca3af;
+}
+
+.form-field__input:disabled {
+    color: #9ca3af;
+}
+
+.form-field__toggle {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.form-field__toggle:hover {
+    color: var(--color-text);
+}
+
+/* ---------- Remember me / forgot password row ---------- */
+
+.login-form__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.login-form__remember {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+.login-form__remember input {
+    accent-color: var(--color-secondary);
+    width: 1rem;
+    height: 1rem;
+}
+
+.login-form__forgot {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-secondary);
+    text-decoration: none;
+}
+
+.login-form__forgot:hover {
+    text-decoration: underline;
+}
+
+/* ---------- Error + submit ---------- */
+
+.login-form__error {
+    margin: -0.5rem 0 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #b91c1c;
+}
+
+.login-form__submit {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.85rem;
+    border: none;
+    border-radius: 10px;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.login-form__submit:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-primary) 85%, black);
+}
+
+.login-form__submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+    .login-page {
+        flex-direction: column;
+    }
+
+    .brand-panel {
+        min-height: 40vh;
+    }
+
+    .login-page__panel {
+        min-height: 60vh;
+    }
+}
