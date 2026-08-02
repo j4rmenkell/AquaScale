@@ -12,6 +12,8 @@ function LoginForm({ onLoginSuccess }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
+    const isFormIncomplete = !email.trim() || !password;
+    
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
@@ -46,7 +48,7 @@ function LoginForm({ onLoginSuccess }) {
           label="Email"
           type="email"
           icon="fa-regular fa-envelope"
-          placeholder="samfajardo@gmail.com"
+          placeholder="employee@gmail.com"
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -97,7 +99,11 @@ function LoginForm({ onLoginSuccess }) {
           </p>
         )}
 
-        <button type="submit" className="login-form__submit" disabled={isSubmitting}>
+        <button 
+          type="submit" 
+          className="login-form__submit"
+          disabled={isSubmitting || isFormIncomplete} 
+        >
           <i className="fa-solid fa-right-to-bracket" />
           {isSubmitting ? 'Logging in…' : 'Log in'}
         </button>

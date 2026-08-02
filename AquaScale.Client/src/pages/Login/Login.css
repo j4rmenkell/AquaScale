@@ -13,6 +13,9 @@
     --color-background: #F2F4F6;
     --color-border: #E6E6E6;
 
+    --color-disabled-bg: #e5e7eb;
+    --color-disabled-text: #9ca3af;
+
     display: flex;
     min-height: 100vh;
     width: 100%;
@@ -55,7 +58,10 @@
     z-index: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    /* Badge stays anchored to the top via normal flow + padding below.
+       .brand-panel__copy is flex:1 and vertically centers its own content,
+       so the headline sits in the middle of whatever space is left under
+       the badge, at any viewport height (see .brand-panel__copy). */
     height: 100%;
     padding: 2.5rem;
 }
@@ -65,6 +71,7 @@
     align-items: center;
     gap: 0.9rem;
     align-self: flex-start;
+    flex-shrink: 0;
     padding: 0.9rem 1.4rem;
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.08);
@@ -102,9 +109,11 @@
 }
 
 .brand-panel__copy {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     max-width: 34rem;
-    margin-bottom: 12rem;
-    /* increase to push the text higher, decrease to lower it */
 }
 
 .brand-panel__headline {
@@ -201,13 +210,25 @@
 
 /* Chrome ignores background-color on autofilled inputs — this inset
    box-shadow trick is the standard workaround. The long transition delay
-   stops the yellow/blue flash from showing before it kicks in. */
+   stops the yellow/blue flash from showing before it kicks in.
+   Chrome also forces its own font on autofilled text unless every text
+   property is overridden explicitly (font-family/size alone isn't enough,
+   -webkit-text-fill-color has to be paired with them).
+   Note: Chrome withholds both this style and the field's value from the
+   page until the user interacts with the page at all — this is a Chrome
+   privacy restriction, not something CSS/JS can override, so the field
+   will look unstyled and the form will look "incomplete" for a moment
+   after an autofilled page load, until the user clicks or types anywhere. */
 .form-field__input:-webkit-autofill,
 .form-field__input:-webkit-autofill:hover,
 .form-field__input:-webkit-autofill:focus {
     -webkit-text-fill-color: var(--color-text);
     -webkit-box-shadow: 0 0 0px 1000px #fff inset;
-    transition: background-color 9999s ease-in-out 0s;
+    caret-color: var(--color-text);
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s;
 }
 
 .form-field__input::placeholder {
@@ -285,22 +306,24 @@
     padding: 0.85rem;
     border: none;
     border-radius: 10px;
-    background: var(--color-primary);
+    background: var(--color-secondary);
     color: #fff;
     font-size: 1rem;
     font-weight: 700;
     font-family: inherit;
     cursor: pointer;
-    transition: background 0.15s ease, opacity 0.15s ease;
+    transition: background 0.15s ease, opacity 0.15s ease, color 0.15s ease;
 }
 
 .login-form__submit:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--color-primary) 85%, black);
+    background: color-mix(in srgb, var(--color-secondary) 85%, black);
 }
 
 .login-form__submit:disabled {
-    opacity: 0.7;
+    background: var(--color-disabled-bg);
+    color: var(--color-disabled-text);
     cursor: not-allowed;
+    opacity: 1;
 }
 
 /* ---------- Responsive ---------- */
