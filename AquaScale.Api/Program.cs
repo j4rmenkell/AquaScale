@@ -1,27 +1,51 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using AquaScale.Api.Data; // Update this if your context is in a different namespace
+using Microsoft.AspNetCore.Authorization;
+using Scalar.AspNetCore;
+
+using AquaScale.Api.Data; 
 using AquaScale.Api.Models.AquaScale;
 using AquaScale.Api.Services;
-using Scalar.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
 using AquaScale.Api.Authorization;
+using AquaScale.Api.Models.Mirror;
+using AquaScale.Api.Services.Ocr;
+using AquaScale.Api.Services.Storage;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ============================================================================
+// DATABASE & CORE SERVICES
+// ============================================================================
 builder.Services.AddDbContext<AquaScaleDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("SupabaseDb"))
            .UseSnakeCaseNamingConvention());
 
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<PropertyOwnershipService>();
+builder.Services.AddScoped<BuyerContactService>();
+builder.Services.AddHttpClient<IOcrService, GoogleVisionOcrService>();
+builder.Services.AddScoped<ReadingValidationService>();
+builder.Services.AddScoped<IQrCodeService, QrCodeService>();
 
-// CHANGED: session-cookie auth, per the decision to use ASP.NET's auth engine against the
-// custom `profiles` table rather than default Identity schema / Supabase Auth. Uses
-// PasswordHasher<Profile> directly (same hashing algorithm Identity uses internally)
-// instead of full UserManager/SignInManager, since that would require custom IUserStore<T>
-// plumbing for marginal benefit here.
+// ============================================================================
+// CORS CONFIGURATION
+// ============================================================================
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+        policy.WithOrigins("http://localhost:5173") // TODO: confirm actual frontend dev port
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()); // required — without this, the session cookie won't be sent/received cross-origin
+});
 
+// ============================================================================
+// AUTHENTICATION
+// ============================================================================
+// Using session-cookie auth, per the decision to use ASP.NET's auth engine against the
+// custom `profiles` table rather than default Identity schema / Supabase Auth. 
 builder.Services.AddSingleton<IPasswordHasher<Profile>, PasswordHasher<Profile>>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -29,16 +53,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.Cookie.Name = "aquascale_session";
         options.Cookie.HttpOnly = true;
-        options.Cookie.SameSite = SameSiteMode.None; // TODO: confirm against actual frontend origin —
-                                                      // None is required for cross-site cookies (e.g.
-                                                      // Capacitor app origin != API origin), but if
-                                                      // frontend and API end up same-site, Lax is safer.
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // requires HTTPS — fine given DigitalOcean+nginx+SSL plan
+        options.Cookie.SameSite = SameSiteMode.None; // None required for cross-site cookies, switch to Lax if same-site
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // requires HTTPS
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
         options.SlidingExpiration = true;
 
-        // This is an API, not an MVC app with login pages — override the default
-        // redirect-to-login-page behavior with plain status codes instead.
+        // Override default redirect-to-login-page behavior with plain status codes for the API
         options.Events.OnRedirectToLogin = context =>
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -51,66 +71,59 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         };
     });
 
-
-
-builder.Services.AddMemoryCache();
+// ============================================================================
+// AUTHORIZATION
+// ============================================================================
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 builder.Services.AddAuthorization();
+
+// ============================================================================
+// API, CONTROLLERS & OPENAPI
+// ============================================================================
 builder.Services.AddControllers();
+builder.Services.AddOpenApi(); // https://aka.ms/aspnet/openapi
 
-// TODO: CORS is required once the frontend runs on a different origin than the API —
-// cookie auth will not work cross-origin without an explicit policy allowing credentials.
-// Not added yet since the actual frontend origin(s) (dev + prod) aren't confirmed here.
-// Example, once known:
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy("Frontend", policy =>
-//         policy.WithOrigins("https://your-frontend-origin.example")
-//               .AllowAnyHeader()
-//               .AllowAnyMethod()
-//               .AllowCredentials());
-// });
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
+// ============================================================================
+// BUILD THE APPLICATION
+// ============================================================================
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ============================================================================
+// HTTP REQUEST PIPELINE (MIDDLEWARE)
+// NOTE: Order is strictly enforced by ASP.NET Core!
+// ============================================================================
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+}
 
-    // Dev-only: creates one Admin role (if missing) and one test Profile with a real
-    // PasswordHasher<Profile> hash, so /api/auth/login has something to authenticate
-    // against. Gated behind IsDevelopment() — never reachable in production.
+app.UseHttpsRedirection();
+app.UseCors("Frontend"); // Must be before Auth
+app.UseAuthentication(); // Must be before Authorization
+app.UseAuthorization();
+app.MapControllers();
+
+// ============================================================================
+// 7. ENDPOINTS & ROUTES
+// ============================================================================
+
+if (app.Environment.IsDevelopment())
+{
     app.MapPost("/dev/seed-admin", async (AquaScaleDbContext db, IPasswordHasher<Profile> hasher, IConfiguration config) =>
     {
         const string devEmail = "admin@aquascale.dev";
-        // Pull from config/env instead of a literal string — still trivially easy for
-        // local dev (one line in appsettings.Development.json, gitignored), but never
-        // committed as plaintext.
         var devPassword = config["DevSeed:AdminPassword"] 
             ?? throw new InvalidOperationException("DevSeed:AdminPassword not configured.");
 
         if (await db.Profiles.AnyAsync(p => p.Email == devEmail))
-        {
             return Results.Conflict("Dev admin already seeded.");
-        }
 
         var adminRole = await db.Roles.FirstOrDefaultAsync(r => r.Name == "Admin");
         if (adminRole is null)
         {
-            adminRole = new Role
-            {
-                Id = Guid.NewGuid(),
-                Name = "Admin",
-                IsSystem = true,
-                Position = 0,
-            };
+            adminRole = new Role { Id = Guid.NewGuid(), Name = "Admin", IsSystem = true, Position = 0 };
             db.Roles.Add(adminRole);
         }
 
@@ -123,7 +136,7 @@ if (app.Environment.IsDevelopment())
             Email = devEmail,
             IsActive = true,
             MustChangePassword = false,
-            PasswordHash = string.Empty, // set below, needs the profile object to exist first
+            PasswordHash = string.Empty, 
         };
         profile.PasswordHash = hasher.HashPassword(profile, devPassword);
 
@@ -132,40 +145,97 @@ if (app.Environment.IsDevelopment())
 
         return Results.Ok(new { email = devEmail, password = devPassword });
     });
+
+    app.MapPost("/dev/seed-buyer", async (AquaScaleDbContext db, IPasswordHasher<Profile> hasher, IConfiguration config, string buyerId) =>
+    {
+        var mirrorBuyer = await db.Set<MirrorBuyer>().FirstOrDefaultAsync(b => b.BuyerId == buyerId);
+        if (mirrorBuyer is null)
+            return Results.NotFound($"No mirror_buyer found with BuyerId '{buyerId}'.");
+
+        var buyerRole = await db.Roles.FirstOrDefaultAsync(r => r.Name == "Buyer");
+        if (buyerRole is null)
+            return Results.NotFound("Customer/Buyer role not seeded yet.");
+
+        var testEmail = $"buyer-{buyerId.ToLower()}@aquascale.dev";
+        var devPassword = config["DevSeed:AdminPassword"]!;
+
+        var profile = new Profile
+        {
+            Id = Guid.NewGuid(),
+            RoleId = buyerRole.Id,
+            Role = buyerRole,
+            FullName = $"Test Buyer ({buyerId})",
+            Email = testEmail,
+            BuyerRef = mirrorBuyer.Id,
+            IsActive = true,
+            MustChangePassword = true,
+            PasswordHash = string.Empty,
+        };
+        profile.PasswordHash = hasher.HashPassword(profile, devPassword);
+
+        db.Profiles.Add(profile);
+        await db.SaveChangesAsync();
+
+        return Results.Ok(new { email = testEmail, password = devPassword, linkedTo = buyerId });
+    });
+
+    app.MapGet("/dev/test-buyer-contact", async (BuyerContactService svc, string buyerId) =>
+    {
+        var contact = await svc.ResolveContactAsync(buyerId);
+        var canIssue = await svc.CanIssueCredentialsAsync(buyerId);
+        return Results.Ok(new { buyerId, contact.MobileNo, contact.Email, canIssue });
+    });
+
+    app.MapPost("/dev/test-ocr", async (IOcrService ocr, IFormFile image) =>
+    {
+        using var ms = new MemoryStream();
+        await image.CopyToAsync(ms);
+        var result = await ocr.ReadMeterImageAsync(ms.ToArray());
+
+        // Extract the actual numeric value from the raw OCR text
+        var numericReading = GoogleVisionOcrService.ExtractNumericReading(result.RawText);
+
+        return Results.Ok(new
+        {
+            result.Success,
+            result.RawText,
+            NumericReading = numericReading, // The actual happy-path proof
+            result.OverallConfidence,
+            DigitCount = result.Digits?.Count ?? 0,
+            result.ErrorMessage,
+        });
+    }).DisableAntiforgery();
+
+    app.MapPost("/dev/test-validation", async (
+    ReadingValidationService validator,
+    Guid meterId,
+    decimal rawReading,
+    float confidence) =>
+    {
+        var result = await validator.ValidateAsync(meterId, rawReading, confidence);
+        return Results.Ok(result);
+    });
+
+    app.MapGet("/dev/test-qrcode", async (IQrCodeService qr, Guid meterId) =>
+    {
+        var pngBytes = qr.GenerateQrCode(meterId);
+        return Results.File(pngBytes, "image/png");
+    });
+    
+}
+// Seeder
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    await DataSeeder.SeedAsync(scope.ServiceProvider.GetRequiredService<AquaScaleDbContext>());
 }
 
-app.UseHttpsRedirection();
 
-// app.UseCors("Frontend"); // uncomment once the CORS policy above is configured
-
-// CHANGED: order matters — authentication must run before authorization.
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
+// ============================================================================
+// RUN APPLICATION
+// ============================================================================
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+// ============================================================================
+// RECORDS / CLASSES
+// ============================================================================

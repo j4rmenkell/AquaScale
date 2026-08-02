@@ -22,6 +22,10 @@ public class AquaScaleDbContext : DbContext
     public DbSet<MeterReading> MeterReadings { get; set; } = null!;
     public DbSet<MirrorReservation> MirrorReservations { get; set; } = null!;
     public DbSet<MirrorBuyer> MirrorBuyers { get; set; } = null!;
+    public DbSet<MirrorBuyerContact> MirrorBuyerContacts { get; set; } = null!;
+    public DbSet<MirrorConsumption> MirrorConsumptions { get; set; } = null!;
+
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -106,6 +110,22 @@ public class AquaScaleDbContext : DbContext
         modelBuilder.Entity<MirrorBuyer>(entity =>
         {
             entity.ToTable("mirror_buyers", t => t.ExcludeFromMigrations());
+        });
+        modelBuilder.Entity<MirrorBuyerContact>(entity =>
+        {
+            entity.ToTable("mirror_buyer_contacts", t => t.ExcludeFromMigrations());
+        });
+        modelBuilder.Entity<MirrorConsumption>(entity =>
+        {
+            entity.ToTable("mirror_consumptions", t => t.ExcludeFromMigrations());
+            
+            entity.Property(e => e.CurRead)
+                .HasColumnType("double precision")
+                .HasConversion<double>(); // <-- This is required to stop the crash
+                
+            entity.Property(e => e.PrevRead)
+                .HasColumnType("double precision")
+                .HasConversion<double>(); // <-- This is required to stop the crash
         });
     }
 }
