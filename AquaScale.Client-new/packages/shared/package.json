@@ -1,0 +1,14 @@
+{
+  "name": "@aquascale/shared",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./ui/*": "./src/ui/*.jsx",
+    "./api/*": "./src/api/*.js",
+    "./styles/*": "./src/styles/*.css"
+  },
+  "peerDependencies": {
+    "react": "^19.2.7"
+  }
+}

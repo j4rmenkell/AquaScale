@@ -1,0 +1,8 @@
+{
+  "name": "aquascale-client-workspace",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

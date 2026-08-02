@@ -1,0 +1,22 @@
+/* ---- AquaScale brand palette (from the figma) ----
+   Shared across all three apps so colors never drift between them.
+   Import this once near the root of each app (e.g. in main.jsx or App's
+   top-level CSS) before any app-specific styles.
+
+   --color-primary     deep green: logo badge, submit button
+   --color-secondary   brighter green: links, hover/focus states
+   --color-text        the app's one text color: headings, labels, body copy
+   --color-background  light gray: panel/page background
+   --color-border      input borders
+*/
+
+:root {
+    --color-primary: #17311A;
+    --color-secondary: #316837;
+    --color-text: #45464D;
+    --color-background: #F2F4F6;
+    --color-border: #E6E6E6;
+
+    --color-disabled-bg: #e5e7eb;
+    --color-disabled-text: #9ca3af;
+}
