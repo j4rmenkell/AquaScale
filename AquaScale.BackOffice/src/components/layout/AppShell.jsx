@@ -11,7 +11,6 @@ function AppShell({
   tabs,
   activeTab,
   onNavigateTab,
-  topBarRight,
   onLoggedOut,
   children,
 }) {
@@ -24,7 +23,7 @@ function AppShell({
         onLoggedOut={onLoggedOut}
       />
       <div className="app-shell__main">
-        <TopBar tabs={tabs} activeTab={activeTab} onNavigateTab={onNavigateTab} rightSlot={topBarRight} />
+        <TopBar tabs={tabs} activeTab={activeTab} onNavigateTab={onNavigateTab} />
         <div className="app-shell__content">{children}</div>
       </div>
     </div>

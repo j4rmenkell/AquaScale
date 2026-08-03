@@ -1,9 +1,1 @@
-.dashboard-date-pill {
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    background: var(--color-background);
-    color: var(--color-text);
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
+/* Dashboard-specific styles go here as real content gets built out. */

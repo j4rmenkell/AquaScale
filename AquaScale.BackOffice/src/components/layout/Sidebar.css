@@ -14,7 +14,8 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 1.5rem 1.25rem;
+    height: 4.75rem;
+    padding: 0 1.25rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -56,10 +57,6 @@
     padding: 1.25rem 1rem;
 }
 
-.sidebar__section+.sidebar__section {
-    margin-top: 1.5rem;
-}
-
 .sidebar__section-label {
     margin: 0 0 0.5rem;
     padding: 0 0.75rem;
@@ -74,7 +71,7 @@
    edge-to-edge, matching the figma. */
 .sidebar__divider {
     height: 1px;
-    margin: 1.5rem -1rem 0;
+    margin: 1.5rem -1rem;
     background: rgba(255, 255, 255, 0.1);
 }
 
@@ -85,7 +82,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.65rem 0.75rem;
+    padding: 0.55rem 0.75rem;
     margin-bottom: 0.15rem;
     border: none;
     border-radius: 8px;

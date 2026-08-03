@@ -5,15 +5,6 @@ import './Dashboard.css';
 // (Customers, Accounting, etc.) have sub-tabs of their own.
 const DASHBOARD_TABS = [{ id: 'dashboard', label: 'Dashboard' }];
 
-function formatToday() {
-  return new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
 function DashboardPage({ user, onLoggedOut }) {
   const firstName = user?.fullName?.split(' ')[0] ?? '';
 
@@ -23,7 +14,6 @@ function DashboardPage({ user, onLoggedOut }) {
       activeSection="dashboard"
       tabs={DASHBOARD_TABS}
       activeTab="dashboard"
-      topBarRight={<div className="dashboard-date-pill">{formatToday()}</div>}
       onLoggedOut={onLoggedOut}
     >
       <h1>Good Morning, {firstName}</h1>

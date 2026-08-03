@@ -3,11 +3,7 @@ import './TopBar.css';
 // tabs: [{ id, label }] — the sub-tabs for whichever sidebar section is
 // active. Right now Dashboard only has one tab ("Dashboard" itself); other
 // sections will pass their own list once they exist.
-//
-// rightSlot: whatever the current page wants shown on the right side of the
-// bar — a date pill for Dashboard, maybe a search box or filter for other
-// pages later, or nothing at all. TopBar stays generic and doesn't assume.
-function TopBar({ tabs = [], activeTab, onNavigateTab, rightSlot }) {
+function TopBar({ tabs = [], activeTab, onNavigateTab }) {
   return (
     <header className="top-bar">
       <nav className="top-bar__tabs">
@@ -22,7 +18,6 @@ function TopBar({ tabs = [], activeTab, onNavigateTab, rightSlot }) {
           </button>
         ))}
       </nav>
-      {rightSlot && <div className="top-bar__right">{rightSlot}</div>}
     </header>
   );
 }

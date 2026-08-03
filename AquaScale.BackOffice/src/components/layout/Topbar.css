@@ -1,8 +1,10 @@
 .top-bar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 0rem;
+    height: 3.75rem;
+    padding: 0 2rem;
+    box-sizing: border-box;
+    overflow: hidden;
     background: #fff;
     border-bottom: 1px solid var(--color-border);
     font-family: 'Inter', system-ui, sans-serif;
@@ -10,20 +12,27 @@
 
 .top-bar__tabs {
     display: flex;
+    align-items: center;
+    height: 100%;
     gap: 1.75rem;
 }
 
 .top-bar__tab {
-    padding: 0 0 0.6rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin: 0;
+    padding: 0;
     border: none;
-    border-bottom: 2px solid transparent;
     background: none;
     color: var(--color-disabled-text);
     font-family: inherit;
     font-size: 1rem;
     font-weight: 600;
+    line-height: 1.2;
     cursor: pointer;
-    transition: color 0.15s ease, border-color 0.15s ease;
+    transition: color 0.15s ease;
 }
 
 .top-bar__tab:hover {
@@ -32,10 +41,17 @@
 
 .top-bar__tab--active {
     color: var(--color-text);
-    border-bottom-color: var(--color-primary);
 }
 
-.top-bar__right {
-    display: flex;
-    align-items: center;
+/* Active indicator — a real element instead of border-bottom, so it can be
+   thicker, rounded, and positioned independently of the text baseline. */
+.top-bar__tab--active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--color-primary);
 }
