@@ -7,8 +7,18 @@ services:
       - ./AquaScale.Api/.env
     # ports, depends_on, etc. added once the API has something to serve
 
-  client:
+  back-office:
     build:
-      context: ./AquaScale.Client
+      context: ./AquaScale.BackOffice
       dockerfile: Dockerfile
     # added once the frontend has something to build
+
+  # field-worker:
+  #   build:
+  #     context: ./AquaScale.FieldWorker
+  #     dockerfile: Dockerfile
+
+  # buyer-portal:
+  #   build:
+  #     context: ./AquaScale.BuyerPortal
+  #     dockerfile: Dockerfile
