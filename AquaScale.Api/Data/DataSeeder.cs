@@ -16,6 +16,7 @@ public static class DataSeeder
         (PermissionKeys.PaymentsVerify, "Payments", "Verify a submitted payment proof"),
         (PermissionKeys.RolesView, "Roles", "Viewing of roles"),
         (PermissionKeys.RolesManage, "Roles", "Managing of roles"),
+        (PermissionKeys.MeterReadingsCreate, "Meter Readings", "Capture a new meter reading"),
         // add here as new permissions get built
     };
 
@@ -26,6 +27,7 @@ public static class DataSeeder
         ("Authorized Person", PermissionKeys.PaymentsVerify),
         ("Admin", PermissionKeys.RolesView),
         ("Admin", PermissionKeys.RolesManage),
+        ("Field Worker", PermissionKeys.MeterReadingsCreate),
         // add here as new permissions get built
     };
 

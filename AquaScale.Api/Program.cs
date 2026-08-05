@@ -28,6 +28,7 @@ builder.Services.AddScoped<BuyerContactService>();
 builder.Services.AddHttpClient<IOcrService, GoogleVisionOcrService>();
 builder.Services.AddScoped<ReadingValidationService>();
 builder.Services.AddScoped<IQrCodeService, QrCodeService>();
+builder.Services.AddScoped<IPhotoStorageService, R2StorageService>();
 
 // ============================================================================
 // CORS CONFIGURATION
