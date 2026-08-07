@@ -3,8 +3,16 @@ name: React CI
 on:
   push:
     branches: [ "main", "master" ]
+    paths:
+      - 'AquaScale.BackOffice/**'
+      - 'AquaScale.FieldWorker/**'
+      - 'AquaScale.Portal/**'
   pull_request:
     branches: [ "main", "master" ]
+    paths:
+      - 'AquaScale.BackOffice/**'
+      - 'AquaScale.FieldWorker/**'
+      - 'AquaScale.Portal/**'
 
 jobs:
   build-and-test:
@@ -12,7 +20,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [22.x]
+        project: 
+          - AquaScale.BackOffice
+          - AquaScale.FieldWorker
+          - AquaScale.Portal
+
+    defaults:
+      run:
+        working-directory: ./${{ matrix.project }}
 
     steps:
       - name: Checkout repository
@@ -23,6 +39,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: './${{ matrix.project }}/package-lock.json'
 
       - name: Install dependencies
         run: npm ci
@@ -41,9 +58,9 @@ jobs:
       - name: Upload build output
         uses: actions/upload-artifact@v4
         with:
-          name: react-build-node-${{ matrix.node-version }}
+          name: ${{ matrix.project }}-build-node-${{ matrix.node-version }}
           path: |
-            dist/
-            build/
-            .next/
+            ./${{ matrix.project }}/dist/
+            ./${{ matrix.project }}/build/
+            ./${{ matrix.project }}/.next/
           retention-days: 7
