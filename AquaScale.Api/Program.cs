@@ -12,6 +12,9 @@ using AquaScale.Api.Models.Webs;
 using AquaScale.Api.Services.Ocr;
 using AquaScale.Api.Services.Storage;
 
+// Testing CI trigger
+JohannPogi
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -326,7 +329,7 @@ app.MapPost("/dev/seed-subdivision", async (
         .Select(r => r.BuyerId.Trim())
         .Distinct()
         .ToList();
-    IAMANERROR
+    
     var buyersById = await websDb.Buyers
         .Where(b => buyerIds.Contains(b.BuyerId))
         // FIX: Add .Trim() to the dictionary key
