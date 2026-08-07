@@ -321,12 +321,12 @@ app.MapPost("/dev/seed-subdivision", async (
         .Where(r => reservationNos.Contains(r.ReservationNo) && r.BackoutType == null)
         .ToDictionaryAsync(r => r.ReservationNo);
 
-// ── Batch prefetch #2: M_Buyer (names) for every bound owner in this batch ──
+    // ── Batch prefetch #2: M_Buyer (names) for every bound owner in this batch ──
     var buyerIds = reservationsByNo.Values
         .Select(r => r.BuyerId.Trim())
         .Distinct()
         .ToList();
-
+    IAMANERROR
     var buyersById = await websDb.Buyers
         .Where(b => buyerIds.Contains(b.BuyerId))
         // FIX: Add .Trim() to the dictionary key
