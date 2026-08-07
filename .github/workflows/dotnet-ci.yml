@@ -34,13 +34,15 @@ jobs:
 
       - name: Test (with coverage)
         shell: bash
+        env:
+          MSYS_NO_PATHCONV: 1
         run: |
           dotnet test --no-build --configuration Release --verbosity normal \
             --results-directory ./TestResults \
             --logger "trx;LogFileName=test_results.trx" \
-            -p:CollectCoverage=true \
-            -p:CoverletOutput=./TestResults/coverage/ \
-            -p:CoverletOutputFormat=cobertura
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=./TestResults/coverage/ \
+            /p:CoverletOutputFormat=cobertura
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
