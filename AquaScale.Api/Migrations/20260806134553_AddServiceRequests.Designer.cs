@@ -4,6 +4,7 @@ using AquaScale.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AquaScale.Api.Migrations
 {
     [DbContext(typeof(AquaScaleDbContext))]
-    partial class AquaScaleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260806134553_AddServiceRequests")]
+    partial class AddServiceRequests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -422,9 +425,6 @@ namespace AquaScale.Api.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LegacyCode")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MobileDataProvider")
                         .HasColumnType("nvarchar(max)");
