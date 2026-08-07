@@ -42,7 +42,7 @@ jobs:
           cache-dependency-path: './${{ matrix.project }}/package-lock.json'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Lint code
         run: npm run lint --if-present
