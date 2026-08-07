@@ -1,4 +1,3 @@
-using AquaScale.Api.Models.Mirror;
 
 namespace AquaScale.Api.Models.AquaScale;
 
@@ -15,15 +14,17 @@ public class Meter
     public Guid PropertyId { get; set; }
     public Property Property { get; set; } = null!;
 
+    // Scalar reference to WEBS.dbo.T_Account_Meter.ID.
+    // No EF navigation property — cross-database FKs are not DB-enforced.
+    // Query WEBSAccountMeters in DbContext to resolve the account-meter record.
     public Guid? MirrorAcctmtrId { get; set; }
-    public MirrorAccountMeter? MirrorAccountMeter { get; set; }
 
     public string UtilityType { get; set; } = "Water";
     public string? QrCode { get; set; }
 
     // AquaScale's OWN field-reported status — intentionally distinct from
-    // mirror_account_status (WEBS's Operational/Defective/Lost status,
-    // per M_GenCodes Group 41, synced read-only via the Syncer).
+    // T_Account_Meter_Status (WEBS's Operational/Defective/Lost status,
+    // per M_GenCodes Group 41, queried read-only from WEBS).
     public MeterStatus MeterStatus { get; set; } = MeterStatus.Active;
     public DateTime? DateMarkedNonOperational { get; set; }
 

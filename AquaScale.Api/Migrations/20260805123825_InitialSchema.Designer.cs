@@ -4,6 +4,7 @@ using AquaScale.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AquaScale.Api.Migrations
 {
     [DbContext(typeof(AquaScaleDbContext))]
-    partial class AquaScaleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260805123825_InitialSchema")]
+    partial class InitialSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -351,63 +354,6 @@ namespace AquaScale.Api.Migrations
                     b.ToTable("RolePermissions");
                 });
 
-            modelBuilder.Entity("AquaScale.Api.Models.AquaScale.ServiceRequest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWSEQUENTIALID()");
-
-                    b.Property<Guid?>("AssignedTo")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InternalNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IssueType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("MeterId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PropertyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ResolvedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValueSql("'Open'");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignedTo");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("MeterId");
-
-                    b.HasIndex("PropertyId");
-
-                    b.ToTable("ServiceRequests");
-                });
-
             modelBuilder.Entity("AquaScale.Api.Models.AquaScale.Subdivision", b =>
                 {
                     b.Property<Guid>("Id")
@@ -423,9 +369,6 @@ namespace AquaScale.Api.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("LegacyCode")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("MobileDataProvider")
                         .HasColumnType("nvarchar(max)");
 
@@ -436,6 +379,270 @@ namespace AquaScale.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Subdivisions");
+                });
+
+            modelBuilder.Entity("AquaScale.Api.Models.Webs.WEBSAccountMeter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateInstalled")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("DepAmt")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("DepDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Hold")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MeterNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MeterStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("StatusDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("WithIssue")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("T_Account_Meter", null, t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AquaScale.Api.Models.Webs.WEBSBillingAccount", b =>
+                {
+                    b.Property<string>("AccountNo")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AcctStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BillType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateReg")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Entity_ID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Movein")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Project_ID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReservationNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AccountNo");
+
+                    b.ToTable("T_Billing_Account", null, t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AquaScale.Api.Models.Webs.WEBSBuyer", b =>
+                {
+                    b.Property<string>("BuyerId")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("Buyer_ID");
+
+                    b.Property<string>("BuyerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BuyerId");
+
+                    b.ToTable("M_Buyer", null, t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AquaScale.Api.Models.Webs.WEBSBuyerContact", b =>
+                {
+                    b.Property<string>("BuyerId")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("Buyer_ID");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MobileNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BuyerId", "DateUpdated");
+
+                    b.ToTable("M_Buyer_Contact", null, t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AquaScale.Api.Models.Webs.WEBSConsumption", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AcctMtrId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AcctMtr_ID");
+
+                    b.Property<decimal>("CurCharge")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double>("CurRead")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("DateRead")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("PrevRead")
+                        .HasColumnType("float");
+
+                    b.Property<decimal>("RatePerMtr")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SeqNo")
+                        .HasColumnType("int");
+
+                    b.Property<double>("UsedPerMtr")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("T_Consumption", null, t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AquaScale.Api.Models.Webs.WEBSPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AcctMtrId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AcctMtr_ID");
+
+                    b.Property<decimal?>("AmtPaid")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Balance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("CurCharge")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("OrDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ORDate");
+
+                    b.Property<string>("OrNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("Penalty")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("PrevBalance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SeqNo")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("TotAmtDue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("T_Payment", null, t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("AquaScale.Api.Models.Webs.WEBSReservation", b =>
+                {
+                    b.Property<string>("ReservationNo")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BackoutType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BuyerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Buyer_ID");
+
+                    b.Property<string>("CompPBL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateReserved")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ReservationNo");
+
+                    b.ToTable("T_PM_Reservation", null, t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
                 });
 
             modelBuilder.Entity("AquaScale.Api.Models.AquaScale.Meter", b =>
@@ -514,38 +721,6 @@ namespace AquaScale.Api.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("AquaScale.Api.Models.AquaScale.ServiceRequest", b =>
-                {
-                    b.HasOne("AquaScale.Api.Models.AquaScale.Profile", "AssignedToProfile")
-                        .WithMany()
-                        .HasForeignKey("AssignedTo")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("AquaScale.Api.Models.AquaScale.Profile", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("AquaScale.Api.Models.AquaScale.Meter", "Meter")
-                        .WithMany()
-                        .HasForeignKey("MeterId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("AquaScale.Api.Models.AquaScale.Property", "Property")
-                        .WithMany()
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("AssignedToProfile");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Meter");
-
-                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("AquaScale.Api.Models.AquaScale.Meter", b =>

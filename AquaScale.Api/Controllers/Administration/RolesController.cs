@@ -9,8 +9,7 @@ using AquaScale.Api.Models.AquaScale;
 using AquaScale.Api.Authorization;
 using AquaScale.Api.Models.Dtos;
 
-namespace AquaScale.Api.Controllers;
-
+namespace AquaScale.Api.Controllers.Administration;
 
 [ApiController]
 [Route("api/roles")]

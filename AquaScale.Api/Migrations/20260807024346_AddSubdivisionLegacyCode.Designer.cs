@@ -4,6 +4,7 @@ using AquaScale.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AquaScale.Api.Migrations
 {
     [DbContext(typeof(AquaScaleDbContext))]
-    partial class AquaScaleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260807024346_AddSubdivisionLegacyCode")]
+    partial class AddSubdivisionLegacyCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
