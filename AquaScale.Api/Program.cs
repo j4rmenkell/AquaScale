@@ -12,9 +12,6 @@ using AquaScale.Api.Models.Webs;
 using AquaScale.Api.Services.Ocr;
 using AquaScale.Api.Services.Storage;
 
-// Testing CI trigger
-JohannPogi
-
 
 var builder = WebApplication.CreateBuilder(args);
 
