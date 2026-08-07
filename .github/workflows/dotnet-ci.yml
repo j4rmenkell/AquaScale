@@ -34,8 +34,10 @@ jobs:
 
       - name: Test (with coverage)
         shell: bash
+        env:
+          MSYS_NO_PATHCONV: 1
         run: |
-          dotnet test --no-build --verbosity normal \
+          dotnet test --no-build --configuration Release --verbosity normal \
             --results-directory ./TestResults \
             --logger "trx;LogFileName=test_results.trx" \
             /p:CollectCoverage=true \
