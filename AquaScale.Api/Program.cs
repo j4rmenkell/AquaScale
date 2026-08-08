@@ -359,6 +359,7 @@ app.MapPost("/dev/seed-subdivision", async (
             {
                 Id = Guid.NewGuid(),
                 Name = subdivisionName,
+                LegacyCode = projectId,
                 IsActive = true,
             };
             aquaScaleDb.Subdivisions.Add(subdivision);

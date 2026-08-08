@@ -6,7 +6,7 @@ using AquaScale.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace AquaScale.Api.Controllers.Customers;
+namespace AquaScale.Api.Controllers.BackOffice.Customers;
 
 [ApiController]
 [Route("api/customers")]
