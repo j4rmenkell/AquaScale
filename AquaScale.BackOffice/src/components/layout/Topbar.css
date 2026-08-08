@@ -43,8 +43,6 @@
     color: var(--color-text);
 }
 
-/* Active indicator — a real element instead of border-bottom, so it can be
-   thicker, rounded, and positioned independently of the text baseline. */
 .top-bar__tab--active::after {
     content: '';
     position: absolute;

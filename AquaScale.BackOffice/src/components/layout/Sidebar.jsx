@@ -19,10 +19,6 @@ const ADMINISTRATION_ITEMS = [
   { id: 'settings', label: 'Settings', icon: 'fa-solid fa-gear' },
 ];
 
-// activeItem/onNavigate are controlled by the parent for now since there's no
-// router yet — items besides "dashboard" don't go anywhere real until their
-// pages exist. Once react-router is added, this swaps to NavLink and reads
-// the active item from the URL instead of a prop.
 function Sidebar({ user, activeItem = 'dashboard', onNavigate, onLoggedOut }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -31,8 +27,7 @@ function Sidebar({ user, activeItem = 'dashboard', onNavigate, onLoggedOut }) {
     try {
       await apiLogout();
     } catch {
-      // Log out locally regardless of whether the server call succeeded —
-      // a network hiccup shouldn't trap the user in a logged-in UI.
+      // Log out locally regardless of whether the server call succeeded.
     } finally {
       setIsLoggingOut(false);
       onLoggedOut?.();

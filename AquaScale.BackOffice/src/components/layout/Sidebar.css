@@ -8,8 +8,6 @@
     font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* ---------- Brand header ---------- */
-
 .sidebar__brand {
     display: flex;
     align-items: center;
@@ -49,8 +47,6 @@
     color: rgba(255, 255, 255, 0.6);
 }
 
-/* ---------- Nav ---------- */
-
 .sidebar__nav {
     flex: 1;
     overflow-y: auto;
@@ -67,15 +63,11 @@
     color: rgba(255, 255, 255, 0.45);
 }
 
-/* Full-bleed divider — cancels the nav's own side padding so it spans
-   edge-to-edge, matching the figma. */
 .sidebar__divider {
     height: 1px;
     margin: 1.5rem -1rem;
     background: rgba(255, 255, 255, 0.1);
 }
-
-/* ---------- Nav item ---------- */
 
 .sidebar-nav-item {
     width: 100%;
@@ -124,8 +116,6 @@
     font-size: 0.75rem;
     opacity: 0.7;
 }
-
-/* ---------- User footer ---------- */
 
 .sidebar__user {
     display: flex;

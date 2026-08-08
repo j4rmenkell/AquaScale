@@ -1,8 +1,5 @@
 import './TopBar.css';
 
-// tabs: [{ id, label }] — the sub-tabs for whichever sidebar section is
-// active. Right now Dashboard only has one tab ("Dashboard" itself); other
-// sections will pass their own list once they exist.
 function TopBar({ tabs = [], activeTab, onNavigateTab }) {
   return (
     <header className="top-bar">

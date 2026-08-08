@@ -1,8 +1,6 @@
 import AppShell from '../../components/layout/AppShell';
 import './Dashboard.css';
 
-// Only one tab exists so far — more get added here once other sections
-// (Customers, Accounting, etc.) have sub-tabs of their own.
 const DASHBOARD_TABS = [{ id: 'dashboard', label: 'Dashboard' }];
 
 function DashboardPage({ user, onLoggedOut }) {
