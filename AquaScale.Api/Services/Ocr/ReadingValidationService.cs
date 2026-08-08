@@ -1,7 +1,7 @@
 using AquaScale.Api.Data;
-using AquaScale.Api.Models.Mirror;
+using AquaScale.Api.Models.Webs;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging; // Make sure this is here
+using Microsoft.Extensions.Logging;
 
 namespace AquaScale.Api.Services.Ocr;
 
@@ -17,17 +17,18 @@ public record ValidationResult(
 public class ReadingValidationService
 {
     private readonly AquaScaleDbContext _db;
-    private readonly ILogger<ReadingValidationService> _logger; // Added logger field
+    private readonly WebsDbContext      _webs;
+    private readonly ILogger<ReadingValidationService> _logger;
 
-    private const bool ConfidenceThresholdEnabled = true;
-    private const float ConfidenceThreshold = 0.85f;
-    private const decimal DefaultMultiplier = 3.0m;
-    private const decimal Tier3FlatDefault = 33m; 
+    private const bool    ConfidenceThresholdEnabled = true;
+    private const float   ConfidenceThreshold        = 0.85f;
+    private const decimal DefaultMultiplier          = 3.0m;
+    private const decimal Tier3FlatDefault           = 33m;
 
-    // Injected the logger into the constructor
-    public ReadingValidationService(AquaScaleDbContext db, ILogger<ReadingValidationService> logger) 
+    public ReadingValidationService(AquaScaleDbContext db, WebsDbContext webs, ILogger<ReadingValidationService> logger)
     {
-        _db = db;
+        _db     = db;
+        _webs   = webs;
         _logger = logger;
     }
 
@@ -71,6 +72,7 @@ public class ReadingValidationService
 
     private async Task<decimal?> GetPrevReadAsync(Guid meterId, CancellationToken ct)
     {
+        // Priority 1: use the most recent AquaScale OCR reading for this meter
         var lastAquaScaleReading = await _db.MeterReadings
             .Where(mr => mr.MeterId == meterId && mr.OcrReadingValue != null)
             .OrderByDescending(mr => mr.CapturedAt)
@@ -79,16 +81,17 @@ public class ReadingValidationService
 
         if (lastAquaScaleReading is not null) return lastAquaScaleReading;
 
+        // Priority 2: fall back to the last WEBS CurRead (historical WEBS billing)
         var meter = await _db.Meters.FindAsync(new object[] { meterId }, ct);
         if (meter?.MirrorAcctmtrId is null) return null;
 
-        var mirrorCurReadRaw = await _db.Set<MirrorConsumption>()
+        var websLastRead = await _webs.Consumptions
             .Where(c => c.AcctMtrId == meter.MirrorAcctmtrId)
             .OrderByDescending(c => c.DateRead)
             .Select(c => c.CurRead)
             .FirstOrDefaultAsync(ct);
 
-        return mirrorCurReadRaw is not null ? (decimal)mirrorCurReadRaw.Value : null;
+        return websLastRead != 0 ? (decimal)websLastRead : null;
     }
 
     private async Task<decimal> GetMaxPlausibleUsageAsync(Guid meterId, CancellationToken ct)
@@ -99,17 +102,17 @@ public class ReadingValidationService
 
         if (meter?.MirrorAcctmtrId is null) return Tier3FlatDefault;
 
-        var rawHistory = await _db.Set<MirrorConsumption>()
-            .Where(c => c.AcctMtrId == meter.MirrorAcctmtrId && c.CurRead != null && c.PrevRead != null)
+        var rawHistory = await _webs.Consumptions
+            .Where(c => c.AcctMtrId == meter.MirrorAcctmtrId)
             .OrderByDescending(c => c.DateRead)
             .Take(12)
-            .Select(c => new { c.CurRead, c.PrevRead })
+            .Select(r => new { r.CurRead, r.PrevRead })
             .ToListAsync(ct);
 
         _logger.LogInformation("GetMaxPlausibleUsage: rawHistory.Count={Count}", rawHistory.Count);
 
         var usageHistory = rawHistory
-            .Select(r => (decimal)r.CurRead!.Value - (decimal)r.PrevRead!.Value)
+            .Select(r => (decimal)r.CurRead - (decimal)r.PrevRead)
             .ToList();
 
         _logger.LogInformation("GetMaxPlausibleUsage: usageHistory.Count={Count}, values=[{Values}]",
@@ -117,25 +120,14 @@ public class ReadingValidationService
 
         if (usageHistory.Count >= 3)
         {
-            var sorted = usageHistory.OrderBy(x => x).ToList();
-            var median = sorted[sorted.Count / 2];
+            var sorted       = usageHistory.OrderBy(x => x).ToList();
+            var median       = sorted[sorted.Count / 2];
             var historicalMax = sorted[^1];
 
             var effectiveBase = median > 0 ? median : historicalMax * 0.5m;
-
-            // CHANGED: no longer floored against Tier3FlatDefault here. When real
-            // history exists (>= 3 readings), trust the meter's own computed ceiling
-            // directly — flooring against the global flat default was silently
-            // overriding legitimate low-usage meters' tighter thresholds, which
-            // defeated the point of computing a meter-specific value at all (e.g. a
-            // meter with historicalMax=5 would still get MaxPlausibleUsage=33,
-            // 6.6x its real ceiling, masking tampering/misreads that a correctly
-            // tight threshold would have caught).
             return effectiveBase * DefaultMultiplier;
         }
 
-        // Genuinely insufficient history (< 3 usable readings) — true fallback,
-        // only reached when there's nothing meter-specific to compute from.
         return Tier3FlatDefault;
     }
 }

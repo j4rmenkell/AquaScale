@@ -1,0 +1,66 @@
+name: React CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    paths:
+      - 'AquaScale.BackOffice/**'
+      - 'AquaScale.FieldWorker/**'
+      - 'AquaScale.Portal/**'
+  pull_request:
+    branches: [ "main", "master" ]
+    paths:
+      - 'AquaScale.BackOffice/**'
+      - 'AquaScale.FieldWorker/**'
+      - 'AquaScale.Portal/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22.x]
+        project: 
+          - AquaScale.BackOffice
+          - AquaScale.FieldWorker
+          - AquaScale.Portal
+
+    defaults:
+      run:
+        working-directory: ./${{ matrix.project }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: './${{ matrix.project }}/package-lock.json'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint code
+        run: npm run lint --if-present
+
+      - name: Run tests
+        run: npm run test --if-present
+
+      - name: Build application
+        run: npm run build
+        env:
+          CI: true
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.project }}-build-node-${{ matrix.node-version }}
+          path: |
+            ./${{ matrix.project }}/dist/
+            ./${{ matrix.project }}/build/
+            ./${{ matrix.project }}/.next/
+          retention-days: 7

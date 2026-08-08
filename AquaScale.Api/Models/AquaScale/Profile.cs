@@ -11,7 +11,7 @@ public class Profile
     public string? ContactNo { get; set; }
     public string? Email { get; set; }
 
-    public Guid? BuyerRef { get; set; } // links to mirror_buyer for Customer/Buyer role
+    public string? BuyerRef { get; set; } // WEBS M_Buyer.Buyer_ID (char 8, e.g. "B0000123") for Customer/Buyer role
 
     public bool IsActive { get; set; } = true;
     public bool MustChangePassword { get; set; } = true; // forced first-login change

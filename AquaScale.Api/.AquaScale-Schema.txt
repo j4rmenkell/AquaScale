@@ -1,0 +1,241 @@
+================================================================================
+AQUASCALE DATABASE SCHEMA REFERENCE
+(Mirrored WEBS tables and sync_jobs excluded)
+================================================================================
+
+Legend:
+  PK    = Primary Key
+  FK    = Foreign Key
+  PK-FK = Composite key that is both a primary key component and a foreign key
+  *     = Field references a MIRRORED table (excluded from this document)
+
+--------------------------------------------------------------------------------
+SECTION 1: ROLES & PERMISSIONS
+--------------------------------------------------------------------------------
+
+TABLE: roles
+  PK  id
+      name
+      description
+      is_system
+      color
+      position
+      created_at
+      updated_at
+
+TABLE: permissions
+  PK  id
+      key
+      category
+      description
+
+TABLE: role_permissions
+  PK-FK role_id
+  PK-FK permission_id
+      granted_at
+  FK  granted_by
+
+--------------------------------------------------------------------------------
+SECTION 2: IDENTITY / PROFILES
+--------------------------------------------------------------------------------
+
+TABLE: profiles
+  PK  id
+  FK  role_id
+      full_name
+      contact_no
+      email
+  FK  buyer_ref                  *(references mirror_buyer)
+      is_active
+      created_at
+      date_deactivated
+
+--------------------------------------------------------------------------------
+SECTION 3: SUBDIVISION / PROPERTY
+--------------------------------------------------------------------------------
+
+TABLE: subdivisions
+  PK  id
+      name
+      geojson_boundary
+      mobile_data_provider
+      created_at
+
+TABLE: properties
+  PK  id
+  FK  subdivision_id
+      block
+      lot
+      comp_pbl
+  FK  mirror_account_no          *(references mirror_billing_account)
+  FK  homeowner_profile_id
+      latitude
+      longitude
+      created_at
+
+TABLE: meters
+  PK  id
+  FK  property_id
+  FK  mirror_acctmtr_id          *(references mirror_account_meter)
+      utility_type
+      qr_code
+      meter_status
+      date_marked_non_operational
+
+--------------------------------------------------------------------------------
+SECTION 4: FIELD CAPTURE
+--------------------------------------------------------------------------------
+
+TABLE: meter_readings
+  PK  id
+  FK  meter_id
+  FK  field_worker_id
+      captured_at
+      gps_lat
+      gps_lng
+      seconds_since_last_capture
+      photo_url
+      qr_scanned_code
+      ocr_reading_value
+      confidence_score
+      previous_reading
+      recapture_count
+      is_duplicate_flag
+      status
+  FK  reviewed_by
+      reviewed_at
+
+--------------------------------------------------------------------------------
+SECTION 5: BILLING & PAYMENTS
+--------------------------------------------------------------------------------
+
+TABLE: billing_statements
+  PK  id
+  FK  meter_reading_id
+  FK  property_id
+      utility_type
+      current_charge
+      previous_balance
+      penalty
+      credit_applied_amount
+      total_amount_due
+      proof_of_utility_photo_url
+      status
+      sent_at
+      voided_at
+  FK  superseded_by
+
+TABLE: payment_proofs
+  PK  id
+  FK  billing_statement_id
+  FK  customer_id
+      reference_no
+      amount_claimed
+      excess_amount
+      screenshot_url
+      status
+  FK  ap_reviewed_by
+      ap_reviewed_at
+      ap_reason
+  FK  accounting_reviewed_by
+      accounting_reviewed_at
+      accounting_reason
+      uploaded_at
+
+TABLE: property_ledgers
+  PK  id
+  FK  property_id
+      utility_type
+      credit_balance
+      updated_at
+
+TABLE: ledger_entries
+  PK  id
+  FK  property_id
+      utility_type
+      entry_type
+      amount
+  FK  payment_proof_id
+  FK  billing_statement_id
+      balance_after
+      created_at
+
+TABLE: payment_reports
+  PK  id
+  FK  subdivision_id
+  FK  generated_by
+      period_from
+      period_to
+      file_url
+      sent_to_teller_at
+
+--------------------------------------------------------------------------------
+SECTION 6: CUSTOMER SERVICE & AUDIT
+--------------------------------------------------------------------------------
+
+TABLE: service_requests
+  PK  id
+  FK  property_id
+  FK  customer_id
+      request_type
+      description
+      status
+  FK  assigned_to
+      created_at
+      resolved_at
+
+TABLE: audit_logs
+  PK  id
+  FK  actor_profile_id
+      action
+      entity_type
+      entity_id
+      details
+      created_at
+
+--------------------------------------------------------------------------------
+SECTION 7: RELATIONSHIPS
+--------------------------------------------------------------------------------
+(Relationships involving mirrored tables or sync_jobs are omitted)
+
+roles              ||--o{  role_permissions   : grants
+permissions        ||--o{  role_permissions   : included_in
+profiles           ||--o{  role_permissions   : granted_by
+
+roles              ||--o{  profiles           : assigned_to
+
+subdivisions       ||--o{  properties         : contains
+profiles           ||--o{  properties         : homeowner
+
+properties         ||--o{  meters             : has
+
+meters             ||--o{  meter_readings     : generates
+profiles           ||--o{  meter_readings     : field_worker
+profiles           ||--o{  meter_readings     : reviewed_by
+
+meter_readings     ||--o|  billing_statements : billed_via
+properties         ||--o{  billing_statements : receives
+billing_statements ||--o|  billing_statements : superseded_by
+
+billing_statements ||--o{  payment_proofs     : paid_by
+profiles           ||--o{  payment_proofs     : customer
+profiles           ||--o{  payment_proofs     : ap_reviewed_by
+profiles           ||--o{  payment_proofs     : accounting_reviewed_by
+
+properties         ||--o|  property_ledgers   : owns_ledger
+properties         ||--o{  ledger_entries     : has_entries
+payment_proofs     ||--o{  ledger_entries     : source_of_credit
+billing_statements ||--o{  ledger_entries     : consumed_by
+
+subdivisions       ||--o{  payment_reports    : covered_by
+profiles           ||--o{  payment_reports    : generated_by
+
+properties         ||--o{  service_requests   : location_of
+profiles           ||--o{  service_requests   : requested_by
+profiles           ||--o{  service_requests   : assigned_to
+
+profiles           ||--o{  audit_logs         : actor
+
+================================================================================
+END OF DOCUMENT — 15 tables total
+================================================================================
