@@ -1,10 +1,7 @@
-﻿function App() {
-  return (
-    <div>
-      <h1>App placeholder</h1>
-      hi nazh
-    </div>
-  );
+﻿import Lots from "./pages/Lots";
+
+function App() {
+  return <Lots />;
 }
 
 export default App;

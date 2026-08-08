@@ -1,0 +1,90 @@
+.meter-type-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--fw-space-4);
+  z-index: 100;
+}
+
+.meter-type-modal {
+  width: 100%;
+  max-width: 340px;
+  background: var(--fw-surface);
+  border-radius: var(--fw-radius-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(16, 24, 40, 0.25);
+}
+
+.meter-type-modal__title {
+  margin: 0;
+  padding: var(--fw-space-4);
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--fw-text-primary);
+}
+
+.meter-type-modal__options {
+  display: flex;
+  min-height: 220px;
+}
+
+.meter-type-modal__option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fw-space-3);
+  border: none;
+  color: var(--fw-surface);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.meter-type-modal__option:focus-visible {
+  outline: 3px solid var(--fw-surface);
+  outline-offset: -6px;
+}
+
+.meter-type-modal__option--water {
+  background: var(--fw-blue);
+}
+
+.meter-type-modal__option--water:active {
+  background: #2568c9;
+}
+
+.meter-type-modal__option--electricity {
+  background: var(--fw-amber);
+}
+
+.meter-type-modal__option--electricity:active {
+  background: #d9910f;
+}
+
+.meter-type-modal__close {
+  display: block;
+  width: 100%;
+  border: none;
+  background: #6B7280;
+  color: var(--fw-surface);
+  font-size: 15px;
+  font-weight: 700;
+  padding: var(--fw-space-4);
+  cursor: pointer;
+}
+
+.meter-type-modal__close:active {
+  background: #565f6c;
+}
+
+.meter-type-modal__close:focus-visible {
+  outline: 2px solid var(--fw-surface);
+  outline-offset: -4px;
+}

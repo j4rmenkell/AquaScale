@@ -1,0 +1,58 @@
+.lot-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fw-space-3);
+  background: var(--fw-surface);
+  border: 1px solid var(--fw-border);
+  border-radius: var(--fw-radius-lg);
+  padding: 16px var(--fw-space-4);
+  box-shadow: var(--fw-shadow-card);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lot-card:active {
+  background: var(--fw-bg);
+}
+
+.lot-card:focus-visible {
+  outline: 2px solid var(--fw-blue);
+  outline-offset: 2px;
+}
+
+.lot-card__label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fw-text-primary);
+}
+
+.lot-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--fw-space-2);
+  flex-shrink: 0;
+}
+
+.lot-card__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: var(--fw-surface);
+  flex-shrink: 0;
+}
+
+.lot-card__badge--water {
+  background: var(--fw-blue);
+}
+
+.lot-card__badge--electricity {
+  background: var(--fw-amber);
+}

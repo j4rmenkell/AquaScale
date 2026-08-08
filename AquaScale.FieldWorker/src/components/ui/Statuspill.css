@@ -1,0 +1,24 @@
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: var(--fw-radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-pill--pending {
+  background: var(--fw-status-pending-bg);
+  color: var(--fw-status-pending-text);
+}
+
+.status-pill--recapture {
+  background: var(--fw-status-recapture-bg);
+  color: var(--fw-status-recapture-text);
+}
+
+.status-pill--captured {
+  background: var(--fw-status-captured-bg);
+  color: var(--fw-status-captured-text);
+}

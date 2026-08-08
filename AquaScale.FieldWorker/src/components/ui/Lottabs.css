@@ -1,0 +1,32 @@
+.lot-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 0 var(--fw-space-4) var(--fw-space-3);
+  padding: 4px;
+  background: #E9EAED;
+  border-radius: var(--fw-radius-md);
+}
+
+.lot-tabs__tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px var(--fw-space-3);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fw-text-secondary);
+  border-radius: var(--fw-radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lot-tabs__tab.is-active {
+  background: var(--fw-surface);
+  color: var(--fw-green);
+  box-shadow: var(--fw-shadow-card);
+}
+
+.lot-tabs__tab:focus-visible {
+  outline: 2px solid var(--fw-blue);
+  outline-offset: 2px;
+}

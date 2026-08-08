@@ -1,0 +1,99 @@
+.search-filter-bar {
+  display: flex;
+  gap: var(--fw-space-2);
+  margin: 0 var(--fw-space-4) var(--fw-space-3);
+}
+
+.search-filter-bar__search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--fw-space-2);
+  background: var(--fw-surface);
+  border: 1px solid var(--fw-border);
+  border-radius: var(--fw-radius-pill);
+  padding: 10px var(--fw-space-4);
+  min-width: 0;
+}
+
+.search-filter-bar__search-icon {
+  color: var(--fw-text-muted);
+  flex-shrink: 0;
+}
+
+.search-filter-bar__search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--fw-text-primary);
+  width: 100%;
+  min-width: 0;
+}
+
+.search-filter-bar__search input::placeholder {
+  color: var(--fw-text-muted);
+}
+
+.search-filter-bar__filter {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.search-filter-bar__filter-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  background: #4B5563;
+  color: var(--fw-surface);
+  border: none;
+  border-radius: var(--fw-radius-pill);
+  padding: 10px var(--fw-space-3);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.search-filter-bar__filter-trigger:focus-visible,
+.search-filter-bar__search input:focus-visible {
+  outline: 2px solid var(--fw-blue);
+  outline-offset: 2px;
+}
+
+.search-filter-bar__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 10;
+  background: var(--fw-surface);
+  border: 1px solid var(--fw-border);
+  border-radius: var(--fw-radius-md);
+  box-shadow: 0 8px 20px rgba(16, 24, 40, 0.12);
+  min-width: 200px;
+  padding: 4px;
+  list-style: none;
+  margin: 0;
+}
+
+.search-filter-bar__menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fw-space-2);
+  background: transparent;
+  border: none;
+  border-radius: var(--fw-radius-sm);
+  padding: 10px var(--fw-space-2);
+  font-size: 14px;
+  color: var(--fw-text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.search-filter-bar__menu-item:hover,
+.search-filter-bar__menu-item:focus-visible {
+  background: var(--fw-bg);
+}
