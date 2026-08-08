@@ -1,0 +1,21 @@
+/* ---- Global design tokens ----
+   Defined once here, used everywhere via var(--color-*).
+   When Figma gives a new hex value, update it here — never redefine
+   a color locally inside a page/component's own CSS file.
+*/
+
+:root {
+    --color-primary: #17311A;
+    /* deep green: logo badge, submit buttons, sidebar */
+    --color-secondary: #316837;
+    /* brighter green: links, hover/focus states, active nav */
+    --color-text: #45464D;
+    /* the app's one text color: headings, labels, body copy */
+    --color-background: #F2F4F6;
+    /* light gray: page/panel backgrounds */
+    --color-border: #E6E6E6;
+    /* input borders, dividers */
+
+    --color-disabled-bg: #e5e7eb;
+    --color-disabled-text: #9ca3af;
+}

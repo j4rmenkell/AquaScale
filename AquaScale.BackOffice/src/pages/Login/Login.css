@@ -1,21 +1,7 @@
-/* ---- Palette (from the figma) ----
-   --color-primary     deep green: logo badge, submit button
-   --color-secondary   brighter green: links, hover/focus states
-   --color-text        the page's one text color: headings, labels, body copy
-   --color-background  light gray: right panel background
-   --color-border      input borders
-*/
+/* Palette lives in src/styles/tokens.css and is available globally — see that
+   file for what each --color-* variable means. */
 
 .login-page {
-    --color-primary: #17311A;
-    --color-secondary: #316837;
-    --color-text: #45464D;
-    --color-background: #F2F4F6;
-    --color-border: #E6E6E6;
-
-    --color-disabled-bg: #e5e7eb;
-    --color-disabled-text: #9ca3af;
-
     display: flex;
     min-height: 100vh;
     width: 100%;

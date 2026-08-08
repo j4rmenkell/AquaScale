@@ -1,5 +1,5 @@
-import heroBackground from '../../assets/login/hero-background.png';
-import logoIcon from '../../assets/login/logo-icon.png';
+import heroBackground from '../../assets/Login/hero-background.png';
+import logoIcon from '../../assets/logo-icon.png';
 
 function BrandPanel() {
   return (
