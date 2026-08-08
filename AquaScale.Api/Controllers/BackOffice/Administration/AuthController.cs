@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace AquaScale.Api.Controllers.Administration;
+namespace AquaScale.Api.Controllers.BackOffice.Administration;
 
 [ApiController]
 [Route("api/auth")]
